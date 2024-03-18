@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.socket.io/4.3.1/socket.io.js"></script>
+
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <h1>Socket response</h1>
+        <div style="display: flex;flex-direction: column;gap: 20px;">
+            <input style="padding: 10px 20px;" id="serial_number" placeholder="Serial Number" />
+            <input style="padding: 10px 20px;" id="voltage" placeholder="voltage" />
+            <input style="padding: 10px 20px;" id="current" placeholder="current" />
+            <button
+                style="padding: 5px 20px; color: white;background-color: blue;font-weight: 600;border: none;font-size: 20px;"
+                id="emit_btn">Emit
+                Event</button>
+        </div>
+        <h1>Error signals</h1>
+        <div style="display: flex;flex-direction: column;gap: 20px;">
+            <textarea name="error_msg" id="error_msg" cols="30" rows="4" placeholder="Error Message"></textarea>
+            <input style="padding: 10px 20px;" id="serial_number_error" placeholder="Serial Number" />
+            <input style="padding: 10px 20px;" id="voltage_error" placeholder="voltage" />
+            <input style="padding: 10px 20px;" id="current_error" placeholder="current" />
+            <button
+                style="padding: 5px 20px; color: white;background-color: blue;font-weight: 600;border: none;font-size: 20px;"
+                id="emit_btn_error">Emit Error
+                Event</button>
+        </div>
+    </div>
+</body>
+
+</html>
+<script>
+    const socket = io("http://localhost:3001");
+    const emit_button = document.getElementById("emit_btn");
+    const emit_button_error = document.getElementById("emit_btn_error");
+    emit_button.addEventListener("click", () => {
+        let serial_numberDiv = document.getElementById("serial_number");
+        let serial_number_value = serial_numberDiv.value;
+        let voltageDiv = document.getElementById("voltage");
+        let voltage_value = voltageDiv.value;
+        let currentDiv = document.getElementById("current");
+        let current_value = currentDiv.value;
+        let data = {
+            serialNumber: serial_number_value + "",
+            current: current_value + "A",
+            voltage: voltage_value + "V"
+        }
+        socket.emit("data", data)
+    });
+
+
+    emit_button_error.addEventListener("click", () => {
+        console.log("YES")
+        let text_areaDiv = document.getElementById("error_msg");
+        let text_area_value = text_areaDiv.value;
+        let serial_numberDiv = document.getElementById("serial_number_error");
+        let serial_number_value = serial_numberDiv.value;
+        let voltageDiv = document.getElementById("voltage_error");
+        let voltage_value = voltageDiv.value;
+        let currentDiv = document.getElementById("current_error");
+        let current_value = currentDiv.value;
+        let data = {
+            errormsg: text_area_value,
+            serialNumber: serial_number_value + "",
+            current: current_value + "A",
+            voltage: voltage_value + "V"
+        }
+        console.log("data:", data)
+        socket.emit("error-signal", data)
+    })
+</script>
